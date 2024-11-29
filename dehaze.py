@@ -1,5 +1,6 @@
 from os.path import join
 
+import os
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
@@ -36,10 +37,15 @@ def dehaze(image_path, airlight=np.array([9.5, 10, 9.5])):
 
 
 def main():
-    dehazed = dehaze(join('images', 'bricks.png'))
+    dehazed = dehaze(join('images', 'fog.jpg'))
     rgb = cv2.cvtColor(dehazed.astype(np.float32), cv2.COLOR_BGR2RGB)
+    rgb = np.clip(rgb, 0.0, 1.0)
     plt.imshow(rgb)
     plt.show()
+    desktop_path = os.path.join(os.path.expanduser("~"), 'Desktop')
+    rgb_scaled = (rgb * 255).astype(np.uint8)
+    save_path = os.path.join(desktop_path, 'dehazed_image.png')
+    cv2.imwrite(save_path, cv2.cvtColor(rgb_scaled, cv2.COLOR_RGB2BGR))
 
 
 if __name__ == '__main__':
